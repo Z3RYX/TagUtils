@@ -20,10 +20,27 @@ namespace TagUtils
         int ErrorCount = 0;
         int ChangeCount = 0;
 
-        public TagUtilsMain()
+        public const string TAGUTILS_VERSION = "v1.1.1";
+        public const string TAGUTILS_CONFIG = "TagUtils/config.json";
+
+		public TagUtilsMain()
         {
             InitializeComponent();
-        }
+            Text = $"Tag Utils {TAGUTILS_VERSION}";
+
+			//! Load last used Tag file from config
+			var configPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\" + TAGUTILS_CONFIG;
+
+			if (File.Exists(configPath))
+            {
+                var config = TagConfig.LoadConfig(configPath);
+                if (config.LastUsedTagPath != null && File.Exists(config.LastUsedTagPath))
+                {
+                    TagFile = config.LastUsedTagPath;
+                    AnalyzeFile();
+                }
+            }
+		}
 
         /// <summary>
         /// Looks for the text "Tag:" at the given address
@@ -69,9 +86,14 @@ namespace TagUtils
                 return;
             }
 
+			//! Add Tag file to recent files in config
+            var configPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\" + TAGUTILS_CONFIG;
+            var config = TagConfig.LoadConfig(configPath);
+            config.LastUsedTagPath = TagFile;
+            TagConfig.SaveConfig(configPath, config);
 
-            //! Find render distance
-            var valFloat = TagUtility.TagValues.RenderDistance;
+			//! Find render distance
+			var valFloat = TagUtility.TagValues.RenderDistance;
             f.Seek(valFloat.Address[Version], SeekOrigin.Begin);
             var buffer = new byte[4];
             f.ReadExactly(buffer);
