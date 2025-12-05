@@ -6,6 +6,7 @@ A simple GUI to edit a couple values in the game [Tag: The Power of Paint](https
 - Movement Keys (only for gameplay, not editor)
 - Paint Can Select
 - Paint Can Cheats (for Tag v1.1 only)
+- Change the color of the level transition effect
 
 Most keyboard keys are supported but some are missing. Check [TagUtility.cs](/TagUtility.cs) for all available keys and their string versions.
 
