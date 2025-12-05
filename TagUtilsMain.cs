@@ -35,7 +35,7 @@ namespace TagUtils
             using var f = File.OpenRead(TagFile);
             f.Seek(address, SeekOrigin.Begin);
             var b = new byte[4];
-            f.Read(b);
+            f.ReadExactly(b);
             return b.SequenceEqual(new byte[] { 0x54, 0x61, 0x67, 0x3a });
         }
 
@@ -74,64 +74,79 @@ namespace TagUtils
             var valFloat = TagUtility.TagValues.RenderDistance;
             f.Seek(valFloat.Address[Version], SeekOrigin.Begin);
             var buffer = new byte[4];
-            f.Read(buffer);
+            f.ReadExactly(buffer);
             valFloat.Value = BitConverter.ToSingle(buffer);
+
+			//! Find level transition
+			// Enabled
+            var valBool = TagUtility.TagValues.LevelTransitionEnabled;
+            f.Seek(valBool.Address[Version], SeekOrigin.Begin);
+            buffer = new byte[1];
+            f.ReadExactly(buffer);
+            valBool.Value = buffer[0] == 0xE8;
+
+			// Color
+			var valInt = TagUtility.TagValues.LevelTransitionColor;
+            f.Seek(valInt.Address[Version], SeekOrigin.Begin);
+            buffer = new byte[4];
+            f.ReadExactly(buffer);
+            valInt.Value = TagUtility.TagValues.LevelTransitionEnabled.Value ? -1 : BitConverter.ToInt32(buffer);
 
             //! Find movement keys
             // Up Prime
             var valKey = TagUtility.TagValues.MovementUpPrime;
             f.Seek(valKey.Address[Version], SeekOrigin.Begin);
             buffer = new byte[4];
-            f.Read(buffer);
+            f.ReadExactly(buffer);
             valKey.Value = (Keys)BitConverter.ToInt32(buffer);
 
             // Up Secondary
             valKey = TagUtility.TagValues.MovementUpSecond;
             f.Seek(valKey.Address[Version], SeekOrigin.Begin);
             buffer = new byte[4];
-            f.Read(buffer);
+            f.ReadExactly(buffer);
             valKey.Value = (Keys)BitConverter.ToInt32(buffer);
 
             // Down Prime
             valKey = TagUtility.TagValues.MovementDownPrime;
             f.Seek(valKey.Address[Version], SeekOrigin.Begin);
             buffer = new byte[4];
-            f.Read(buffer);
+            f.ReadExactly(buffer);
             valKey.Value = (Keys)BitConverter.ToInt32(buffer);
 
             // Down Secondary
             valKey = TagUtility.TagValues.MovementDownSecond;
             f.Seek(valKey.Address[Version], SeekOrigin.Begin);
             buffer = new byte[4];
-            f.Read(buffer);
+            f.ReadExactly(buffer);
             valKey.Value = (Keys)BitConverter.ToInt32(buffer);
 
             // Left Prime
             valKey = TagUtility.TagValues.MovementLeftPrime;
             f.Seek(valKey.Address[Version], SeekOrigin.Begin);
             buffer = new byte[4];
-            f.Read(buffer);
+            f.ReadExactly(buffer);
             valKey.Value = (Keys)BitConverter.ToInt32(buffer);
 
             // Left Secondary
             valKey = TagUtility.TagValues.MovementLeftSecond;
             f.Seek(valKey.Address[Version], SeekOrigin.Begin);
             buffer = new byte[4];
-            f.Read(buffer);
+            f.ReadExactly(buffer);
             valKey.Value = (Keys)BitConverter.ToInt32(buffer);
 
             // Right Prime
             valKey = TagUtility.TagValues.MovementRightPrime;
             f.Seek(valKey.Address[Version], SeekOrigin.Begin);
             buffer = new byte[4];
-            f.Read(buffer);
+            f.ReadExactly(buffer);
             valKey.Value = (Keys)BitConverter.ToInt32(buffer);
 
             // Right Secondary
             valKey = TagUtility.TagValues.MovementRightSecond;
             f.Seek(valKey.Address[Version], SeekOrigin.Begin);
             buffer = new byte[4];
-            f.Read(buffer);
+            f.ReadExactly(buffer);
             valKey.Value = (Keys)BitConverter.ToInt32(buffer);
 
             //! Find Can Select
@@ -139,21 +154,21 @@ namespace TagUtils
             valKey = TagUtility.TagValues.CanSelect1_First;
             f.Seek(valKey.Address[Version], SeekOrigin.Begin);
             buffer = new byte[1];
-            f.Read(buffer);
+            f.ReadExactly(buffer);
             valKey.Value = (Keys)buffer[0];
 
             // 2
             valKey = TagUtility.TagValues.CanSelect2_First;
             f.Seek(valKey.Address[Version], SeekOrigin.Begin);
             buffer = new byte[1];
-            f.Read(buffer);
+            f.ReadExactly(buffer);
             valKey.Value = (Keys)buffer[0];
 
             // 3
             valKey = TagUtility.TagValues.CanSelect3_First;
             f.Seek(valKey.Address[Version], SeekOrigin.Begin);
             buffer = new byte[1];
-            f.Read(buffer);
+            f.ReadExactly(buffer);
             valKey.Value = (Keys)buffer[0];
 
             //! Find Can Cheats (Version 1.1)
@@ -163,21 +178,21 @@ namespace TagUtils
                 valKey = TagUtility.TagValues.CanCheats1_First;
                 f.Seek(valKey.Address[Version], SeekOrigin.Begin);
                 buffer = new byte[1];
-                f.Read(buffer);
+                f.ReadExactly(buffer);
                 valKey.Value = (Keys)buffer[0];
 
                 // 2
                 valKey = TagUtility.TagValues.CanCheats2_First;
                 f.Seek(valKey.Address[Version], SeekOrigin.Begin);
                 buffer = new byte[1];
-                f.Read(buffer);
+                f.ReadExactly(buffer);
                 valKey.Value = (Keys)buffer[0];
 
                 // 3
                 valKey = TagUtility.TagValues.CanCheats3_First;
                 f.Seek(valKey.Address[Version], SeekOrigin.Begin);
                 buffer = new byte[1];
-                f.Read(buffer);
+                f.ReadExactly(buffer);
                 valKey.Value = (Keys)buffer[0];
             }
 
@@ -188,8 +203,18 @@ namespace TagUtils
             TbRenderDistance.Visible = true;
             BtnResetRenderDist.Visible = true;
 
-            // Movement
-            TbMovementUp.Text = KeyConverter.ToString(TagUtility.TagValues.MovementUpPrime.Value);
+            // Level Transition
+            CbLevelTransition.Checked = TagUtility.TagValues.LevelTransitionEnabled.Value;
+            CbLevelTransition.Visible = true;
+            BtnLevelTransition.Visible = true;
+            BtnLevelTransition.Enabled = !CbLevelTransition.Checked;
+            BtnLevelTransition.BackColor = CbLevelTransition.Checked
+                ? Color.White
+                : Color.FromArgb(TagUtility.TagValues.LevelTransitionColor.Value);
+            BtnLevelTransition.ForeColor = BtnLevelTransition.BackColor.GetBrightness() < 0.4 ? SystemColors.ControlLight : Color.Black;
+
+			// Movement
+			TbMovementUp.Text = KeyConverter.ToString(TagUtility.TagValues.MovementUpPrime.Value);
             TbMovementDown.Text = KeyConverter.ToString(TagUtility.TagValues.MovementDownPrime.Value);
             TbMovementLeft.Text = KeyConverter.ToString(TagUtility.TagValues.MovementLeftPrime.Value);
             TbMovementRight.Text = KeyConverter.ToString(TagUtility.TagValues.MovementRightPrime.Value);
@@ -252,6 +277,20 @@ namespace TagUtils
                 f.Seek(TagUtility.TagValues.RenderDistance.Address[Version], SeekOrigin.Begin);
                 f.Write(BitConverter.GetBytes(valFloat.Value));
                 TbRenderDistance.Font = new Font(TbRenderDistance.Font, FontStyle.Regular);
+            }
+
+			//! Level Transition
+            f.Seek(TagUtility.TagValues.LevelTransitionEnabled.Address[Version], SeekOrigin.Begin);
+
+            if (CbLevelTransition.Checked && !TagUtility.TagValues.LevelTransitionEnabled.Value)
+            {
+                f.Write([0xE8,0x85,0x4D,0xFD,0xFF]);
+            } else if (!CbLevelTransition.Checked)
+            {
+                var ba = new byte[5];
+                ba[0] = 0xB8;
+                BitConverter.GetBytes(TagUtility.TagValues.LevelTransitionColor.Value).CopyTo(ba, 1);
+                f.Write(ba);
             }
 
             //! Movement
@@ -679,6 +718,27 @@ namespace TagUtils
             TbCanCheats2.Text = KeyConverter.ToString(TagUtility.TagValues.CanCheats2_First.Default);
             TbCanCheats3.Text = KeyConverter.ToString(TagUtility.TagValues.CanCheats3_First.Default);
         }
+
+        // Level Transition Checkbox Changed
+        private void CbLevelTransition_CheckedChanged(object sender, EventArgs e)
+        {
+            BtnLevelTransition.Enabled = !CbLevelTransition.Checked;
+        }
+
+		// Level Transition Color Picker
+		private void BtnLevelTransition_Click(object sender, EventArgs e)
+        {
+            var colorpicker = new ColorPicker();
+            var colorres = colorpicker.ShowDialog();
+            if (colorres == DialogResult.OK)
+            {
+                // CS1690 fix: Copy the value to a local variable before accessing its members
+                var selectedColor = colorpicker.SelectedColor;
+                TagUtility.TagValues.LevelTransitionColor.Value = selectedColor.ToArgb();
+                BtnLevelTransition.BackColor = selectedColor;
+				BtnLevelTransition.ForeColor = selectedColor.GetBrightness() < 0.4 ? SystemColors.ControlLight : Color.Black;
+			}
+		}
     }
 
     public enum TagVersion

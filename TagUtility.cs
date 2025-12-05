@@ -14,6 +14,10 @@ namespace TagUtils
             //! Render Distance
             public static TagValue<float> RenderDistance = new(1350.0f, 0x00143b98, 0x0014497c);
 
+            //! Level Transition
+            public static TagValue<bool> LevelTransitionEnabled = new(true, 0x00095EA6, 0x00096746);
+            public static TagValue<int> LevelTransitionColor = new(-1, 0x00095EA7, 0x00096747);
+
             //! Movement
             // Up
             public static TagValue<Keys> MovementUpPrime = new(Keys.WPressed, 0x00003934, 0x00003854);

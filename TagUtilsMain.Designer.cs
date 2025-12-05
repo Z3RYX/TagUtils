@@ -45,6 +45,7 @@ namespace TagUtils
             BtnResetMovement = new Button();
             BtnResetCanSelect = new Button();
             BtnResetCanCheats = new Button();
+            BtnLevelTransition = new Button();
             LblMovement = new Label();
             TbMovementUp = new TextBox();
             TbMovementDown = new TextBox();
@@ -64,6 +65,7 @@ namespace TagUtils
             LblCanCheats2 = new Label();
             LblCanCheats3 = new Label();
             LblCanCheats = new Label();
+            CbLevelTransition = new CheckBox();
             ((System.ComponentModel.ISupportInitialize)BtnSelectFile).BeginInit();
             SuspendLayout();
             // 
@@ -75,7 +77,7 @@ namespace TagUtils
             // LblFileInfo
             // 
             LblFileInfo.AutoSize = true;
-            LblFileInfo.Font = new Font("Segoe UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point);
+            LblFileInfo.Font = new Font("Segoe UI", 11.25F);
             LblFileInfo.Location = new Point(155, 30);
             LblFileInfo.Name = "LblFileInfo";
             LblFileInfo.Size = new Size(118, 20);
@@ -85,7 +87,7 @@ namespace TagUtils
             // LblDetected
             // 
             LblDetected.AutoSize = true;
-            LblDetected.Font = new Font("Segoe UI", 11.25F, FontStyle.Bold, GraphicsUnit.Point);
+            LblDetected.Font = new Font("Segoe UI", 11.25F, FontStyle.Bold);
             LblDetected.ForeColor = SystemColors.ControlLightLight;
             LblDetected.Location = new Point(73, 30);
             LblDetected.Name = "LblDetected";
@@ -98,8 +100,8 @@ namespace TagUtils
             BtnSelectFile.BackColor = SystemColors.ButtonFace;
             BtnSelectFile.BorderStyle = BorderStyle.Fixed3D;
             BtnSelectFile.Cursor = Cursors.Hand;
-			BtnSelectFile.Image = Properties.Resources.icons8_exe_48;
-			BtnSelectFile.Location = new Point(27, 21);
+            BtnSelectFile.Image = Properties.Resources.icons8_exe_48;
+            BtnSelectFile.Location = new Point(27, 21);
             BtnSelectFile.Name = "BtnSelectFile";
             BtnSelectFile.Size = new Size(40, 40);
             BtnSelectFile.SizeMode = PictureBoxSizeMode.Zoom;
@@ -134,7 +136,6 @@ namespace TagUtils
             BtnApplyAndPlay.BackgroundImageLayout = ImageLayout.Zoom;
             BtnApplyAndPlay.Enabled = false;
             BtnApplyAndPlay.ForeColor = SystemColors.ControlText;
-            BtnApplyAndPlay.Image = Properties.Resources.icons8_play_100;
             BtnApplyAndPlay.ImageAlign = ContentAlignment.MiddleLeft;
             BtnApplyAndPlay.Location = new Point(429, 226);
             BtnApplyAndPlay.Name = "BtnApplyAndPlay";
@@ -152,7 +153,6 @@ namespace TagUtils
             BtnApply.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             BtnApply.Enabled = false;
             BtnApply.ForeColor = SystemColors.ControlText;
-            BtnApply.Image = Properties.Resources.icons8_save_24;
             BtnApply.ImageAlign = ContentAlignment.MiddleLeft;
             BtnApply.Location = new Point(361, 226);
             BtnApply.Name = "BtnApply";
@@ -211,6 +211,18 @@ namespace TagUtils
             BtnResetCanCheats.UseVisualStyleBackColor = true;
             BtnResetCanCheats.Visible = false;
             BtnResetCanCheats.Click += BtnResetCanCheats_Click;
+            // 
+            // BtnLevelTransition
+            // 
+            BtnLevelTransition.Location = new Point(445, 109);
+            BtnLevelTransition.Name = "BtnLevelTransition";
+            BtnLevelTransition.Size = new Size(87, 24);
+            BtnLevelTransition.TabIndex = 34;
+            BtnLevelTransition.Text = "Color Picker";
+            TltResetValue.SetToolTip(BtnLevelTransition, "Open color picker");
+            BtnLevelTransition.UseVisualStyleBackColor = true;
+            BtnLevelTransition.Visible = false;
+            BtnLevelTransition.Click += BtnLevelTransition_Click;
             // 
             // LblMovement
             // 
@@ -395,12 +407,26 @@ namespace TagUtils
             LblCanCheats.Text = "Can Cheats:";
             LblCanCheats.Visible = false;
             // 
+            // CbLevelTransition
+            // 
+            CbLevelTransition.AutoSize = true;
+            CbLevelTransition.Location = new Point(445, 54);
+            CbLevelTransition.Name = "CbLevelTransition";
+            CbLevelTransition.Size = new Size(101, 49);
+            CbLevelTransition.TabIndex = 33;
+            CbLevelTransition.Text = "Random\r\nLevel (default)\r\nTransition";
+            CbLevelTransition.UseVisualStyleBackColor = true;
+            CbLevelTransition.Visible = false;
+            CbLevelTransition.CheckedChanged += CbLevelTransition_CheckedChanged;
+            // 
             // TagUtilsMain
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.DimGray;
             ClientSize = new Size(544, 261);
+            Controls.Add(BtnLevelTransition);
+            Controls.Add(CbLevelTransition);
             Controls.Add(BtnResetCanCheats);
             Controls.Add(LblCanCheats);
             Controls.Add(LblCanCheats3);
@@ -475,5 +501,7 @@ namespace TagUtils
         private Label LblCanCheats3;
         private Label LblCanCheats;
         private Button BtnResetCanCheats;
+        private CheckBox CbLevelTransition;
+        private Button BtnLevelTransition;
     }
 }
