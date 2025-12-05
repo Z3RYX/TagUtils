@@ -20,18 +20,18 @@ namespace TagUtils
         int ErrorCount = 0;
         int ChangeCount = 0;
 
-        public const string TAGUTILS_VERSION = "v1.1.1";
+        public const string TAGUTILS_VERSION = "v1.1.2";
         public const string TAGUTILS_CONFIG = "TagUtils/config.json";
 
-		public TagUtilsMain()
+        public TagUtilsMain()
         {
             InitializeComponent();
             Text = $"Tag Utils {TAGUTILS_VERSION}";
 
-			//! Load last used Tag file from config
-			var configPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\" + TAGUTILS_CONFIG;
+            //! Load last used Tag file from config
+            var configPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\" + TAGUTILS_CONFIG;
 
-			if (File.Exists(configPath))
+            if (File.Exists(configPath))
             {
                 var config = TagConfig.LoadConfig(configPath);
                 if (config.LastUsedTagPath != null && File.Exists(config.LastUsedTagPath))
@@ -40,7 +40,7 @@ namespace TagUtils
                     AnalyzeFile();
                 }
             }
-		}
+        }
 
         /// <summary>
         /// Looks for the text "Tag:" at the given address
@@ -86,11 +86,15 @@ namespace TagUtils
                 return;
             }
 
-			//! Add Tag file to recent files in config
+            //! Add Tag file to recent files in config
             var configPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\" + TAGUTILS_CONFIG;
             var config = TagConfig.LoadConfig(configPath);
             config.LastUsedTagPath = TagFile;
             TagConfig.SaveConfig(configPath, config);
+
+            //! Add Tag file path to label tooltip
+            TltTagPath.SetToolTip(LblFileInfo, TagFile);
+
 
 			//! Find render distance
 			var valFloat = TagUtility.TagValues.RenderDistance;
@@ -99,16 +103,16 @@ namespace TagUtils
             f.ReadExactly(buffer);
             valFloat.Value = BitConverter.ToSingle(buffer);
 
-			//! Find level transition
-			// Enabled
+            //! Find level transition
+            // Enabled
             var valBool = TagUtility.TagValues.LevelTransitionEnabled;
             f.Seek(valBool.Address[Version], SeekOrigin.Begin);
             buffer = new byte[1];
             f.ReadExactly(buffer);
             valBool.Value = buffer[0] == 0xE8;
 
-			// Color
-			var valInt = TagUtility.TagValues.LevelTransitionColor;
+            // Color
+            var valInt = TagUtility.TagValues.LevelTransitionColor;
             f.Seek(valInt.Address[Version], SeekOrigin.Begin);
             buffer = new byte[4];
             f.ReadExactly(buffer);
@@ -235,8 +239,8 @@ namespace TagUtils
                 : Color.FromArgb(TagUtility.TagValues.LevelTransitionColor.Value);
             BtnLevelTransition.ForeColor = BtnLevelTransition.BackColor.GetBrightness() < 0.4 ? SystemColors.ControlLight : Color.Black;
 
-			// Movement
-			TbMovementUp.Text = KeyConverter.ToString(TagUtility.TagValues.MovementUpPrime.Value);
+            // Movement
+            TbMovementUp.Text = KeyConverter.ToString(TagUtility.TagValues.MovementUpPrime.Value);
             TbMovementDown.Text = KeyConverter.ToString(TagUtility.TagValues.MovementDownPrime.Value);
             TbMovementLeft.Text = KeyConverter.ToString(TagUtility.TagValues.MovementLeftPrime.Value);
             TbMovementRight.Text = KeyConverter.ToString(TagUtility.TagValues.MovementRightPrime.Value);
@@ -301,13 +305,14 @@ namespace TagUtils
                 TbRenderDistance.Font = new Font(TbRenderDistance.Font, FontStyle.Regular);
             }
 
-			//! Level Transition
+            //! Level Transition
             f.Seek(TagUtility.TagValues.LevelTransitionEnabled.Address[Version], SeekOrigin.Begin);
 
             if (CbLevelTransition.Checked && !TagUtility.TagValues.LevelTransitionEnabled.Value)
             {
-                f.Write([0xE8,0x85,0x4D,0xFD,0xFF]);
-            } else if (!CbLevelTransition.Checked)
+                f.Write([0xE8, 0x85, 0x4D, 0xFD, 0xFF]);
+            }
+            else if (!CbLevelTransition.Checked)
             {
                 var ba = new byte[5];
                 ba[0] = 0xB8;
@@ -747,8 +752,8 @@ namespace TagUtils
             BtnLevelTransition.Enabled = !CbLevelTransition.Checked;
         }
 
-		// Level Transition Color Picker
-		private void BtnLevelTransition_Click(object sender, EventArgs e)
+        // Level Transition Color Picker
+        private void BtnLevelTransition_Click(object sender, EventArgs e)
         {
             var colorpicker = new ColorPicker();
             var colorres = colorpicker.ShowDialog();
@@ -758,9 +763,9 @@ namespace TagUtils
                 var selectedColor = colorpicker.SelectedColor;
                 TagUtility.TagValues.LevelTransitionColor.Value = selectedColor.ToArgb();
                 BtnLevelTransition.BackColor = selectedColor;
-				BtnLevelTransition.ForeColor = selectedColor.GetBrightness() < 0.4 ? SystemColors.ControlLight : Color.Black;
-			}
-		}
+                BtnLevelTransition.ForeColor = selectedColor.GetBrightness() < 0.4 ? SystemColors.ControlLight : Color.Black;
+            }
+        }
     }
 
     public enum TagVersion

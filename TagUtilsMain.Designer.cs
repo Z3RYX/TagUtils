@@ -66,6 +66,7 @@ namespace TagUtils
             LblCanCheats3 = new Label();
             LblCanCheats = new Label();
             CbLevelTransition = new CheckBox();
+            TltTagPath = new ToolTip(components);
             ((System.ComponentModel.ISupportInitialize)BtnSelectFile).BeginInit();
             SuspendLayout();
             // 
@@ -503,5 +504,6 @@ namespace TagUtils
         private Button BtnResetCanCheats;
         private CheckBox CbLevelTransition;
         private Button BtnLevelTransition;
+        private ToolTip TltTagPath;
     }
 }
