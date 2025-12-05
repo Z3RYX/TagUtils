@@ -1,4 +1,6 @@
-﻿namespace TagUtils
+﻿using Microsoft.VisualBasic;
+
+namespace TagUtils
 {
     partial class TagUtilsMain
     {
@@ -96,8 +98,8 @@
             BtnSelectFile.BackColor = SystemColors.ButtonFace;
             BtnSelectFile.BorderStyle = BorderStyle.Fixed3D;
             BtnSelectFile.Cursor = Cursors.Hand;
-            BtnSelectFile.Image = Properties.Resources.icons8_exe_48;
-            BtnSelectFile.Location = new Point(27, 21);
+			BtnSelectFile.Image = Properties.Resources.icons8_exe_48;
+			BtnSelectFile.Location = new Point(27, 21);
             BtnSelectFile.Name = "BtnSelectFile";
             BtnSelectFile.Size = new Size(40, 40);
             BtnSelectFile.SizeMode = PictureBoxSizeMode.Zoom;
